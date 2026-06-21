@@ -241,6 +241,12 @@ static void *render_thread_func(void *arg)
             continue;
         }
 
+        if (s->ctx && is_fallback(s->ctx)) {
+            select_dmabuf(s->ctx, 0); // Trigger non-blocking try_exit_fallback
+            usleep(16000);            // 16ms frame sleep
+            continue;
+        }
+
         ANativeWindowBuffer *anb = NULL;
         int acqfence = -1;
         if (api.dequeueBuffer(s->window, &anb, &acqfence) != 0 || !anb) {

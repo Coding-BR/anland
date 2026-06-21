@@ -317,3 +317,8 @@ int set_fallback_callback(display_ctx *ctx, void (*on_fallback)(void *), void *u
     ctx->fallback_userdata = userdata;
     return 0;
 }
+
+bool is_fallback(display_ctx *ctx)
+{
+    return ctx ? ctx->fallback : true;
+}

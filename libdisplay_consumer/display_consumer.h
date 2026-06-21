@@ -2,6 +2,7 @@
 #define DISPLAY_CONSUMER_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "../common/protocol.h"
 
 typedef struct display_ctx display_ctx;
@@ -14,5 +15,6 @@ int  select_dmabuf(display_ctx *ctx, int idx);
 int  refresh_done(display_ctx *ctx);
 int  push_input_event(display_ctx *ctx, const struct InputEvent *event);
 int  set_fallback_callback(display_ctx *ctx, void (*on_fallback)(void *), void *userdata);
+bool is_fallback(display_ctx *ctx);
 
 #endif
