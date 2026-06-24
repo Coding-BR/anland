@@ -72,12 +72,32 @@ static int send_screen_info_msg(int fd)
     return send_all(fd, buf, sizeof(buf));
 }
 
+static void update_screen_info(const struct screen_info *si)
+{
+    bool changed = !has_screen_info || memcmp(si, &stored_screen, sizeof(*si)) != 0;
+
+    stored_screen = *si;
+    has_screen_info = true;
+
+    if (changed) {
+        fprintf(stderr, "daemon: screen info %ux%u fmt=%u refresh=%u\n",
+                si->width, si->height, si->format, si->refresh);
+        if (producer) {
+            send_screen_info_msg(producer->ctrl_fd);
+            producer_waiting_screen = false;
+        }
+    }
+}
+
 static void try_deliver_fds(void)
 {
     if (!producer || deposited_fd_count < 4) {
         producer_waiting_fds = true;
         return;
     }
+
+    if (consumer)
+        send_ctrl(consumer->ctrl_fd, CTRL_MSG_FDS_READY);
 
     struct ctrl_msg msg = { .type = CTRL_MSG_FDS_READY, .size = 0 };
     if (send_fds(producer->ctrl_fd, &msg, sizeof(msg),
@@ -86,9 +106,6 @@ static void try_deliver_fds(void)
         producer_waiting_fds = true;
         return;
     }
-
-    if (consumer)
-        send_ctrl(consumer->ctrl_fd, CTRL_MSG_FDS_READY);
 
     for (int i = 0; i < deposited_fd_count; i++)
         close(deposited_fds[i]);
@@ -149,13 +166,7 @@ static void handle_client_data(struct client *c)
         if (c == consumer && hdr.size == sizeof(struct screen_info)) {
             struct screen_info si;
             memcpy(&si, payload, sizeof(si));
-            /* Always accept the consumer's screen info, even if it differs from a
-             * previous connection — the Android display may have rotated or switched
-             * resolution. Overwrite and forward to any waiting producer. */
-            stored_screen = si;
-            has_screen_info = true;
-            fprintf(stderr, "daemon: screen info %ux%u fmt=%u\n",
-                    si.width, si.height, si.format);
+            update_screen_info(&si);
             if (producer_waiting_screen && producer) {
                 send_screen_info_msg(producer->ctrl_fd);
                 producer_waiting_screen = false;
