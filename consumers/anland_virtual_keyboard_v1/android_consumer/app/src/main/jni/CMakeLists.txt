@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
 project(anland_consumer C)
 
-set(LIBDISPLAY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../..)
+set(LIBDISPLAY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../..)
 
 add_library(anland_consumer SHARED
     native_consumer.c

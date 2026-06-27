@@ -1,0 +1,26 @@
+# Allow the Android Anland consumer app to reach the daemon socket.
+# Android 16 blocks untrusted_app from traversing /data/local/tmp by default,
+# even when the socket itself is mode 777.
+allow untrusted_app shell_data_file dir { getattr search }
+allow untrusted_app shell_data_file sock_file { getattr open read write }
+
+# KernelSU commonly runs service.sh daemons in the ksu domain. Keep Magisk/su
+# here too so the same module works across root managers.
+allow untrusted_app ksu unix_stream_socket connectto
+allow untrusted_app magisk unix_stream_socket connectto
+allow untrusted_app su unix_stream_socket connectto
+
+# Root-manager service domains need to create the daemon socket in
+# /data/local/tmp before the Android app and the container producer connect.
+allow ksu shell_data_file dir { add_name getattr remove_name search write }
+allow ksu shell_data_file sock_file { create getattr open read setattr unlink write }
+allow ksu self unix_stream_socket { accept bind create getattr getopt listen read setopt write }
+allow magisk shell_data_file dir { add_name getattr remove_name search write }
+allow magisk shell_data_file sock_file { create getattr open read setattr unlink write }
+allow magisk self unix_stream_socket { accept bind create getattr getopt listen read setopt write }
+allow su shell_data_file dir { add_name getattr remove_name search write }
+allow su shell_data_file sock_file { create getattr open read setattr unlink write }
+allow su self unix_stream_socket { accept bind create getattr getopt listen read setopt write }
+allow shell shell_data_file dir { add_name getattr remove_name search write }
+allow shell shell_data_file sock_file { create getattr open read setattr unlink write }
+allow shell self unix_stream_socket { accept bind create getattr getopt listen read setopt write }

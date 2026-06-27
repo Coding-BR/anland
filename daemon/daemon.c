@@ -14,6 +14,13 @@
 
 #define MAX_EVENTS 16
 #define MAX_FDS    4
+#define ABSTRACT_SOCKET_NAME "anland_display"
+
+struct listener {
+    int fd;
+    const char *name;
+    const char *unlink_path;
+};
 
 struct client {
     int  ctrl_fd;
@@ -33,6 +40,9 @@ static int deposited_fd_count;
 
 static bool producer_waiting_screen;
 static bool producer_waiting_fds;
+
+static struct listener file_listener = { .fd = -1 };
+static struct listener abstract_listener = { .fd = -1 };
 
 static void handle_signal(int sig)
 {
@@ -241,6 +251,53 @@ static void handle_new_connection(int listen_fd)
     epoll_ctl(epoll_fd, EPOLL_CTL_ADD, client_fd, &ev);
 }
 
+static int create_listener(struct listener *listener, const char *path, bool abstract)
+{
+    int fd = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (fd < 0) {
+        perror("socket");
+        return -1;
+    }
+
+    struct sockaddr_un addr;
+    memset(&addr, 0, sizeof(addr));
+    addr.sun_family = AF_UNIX;
+    socklen_t addr_len = sizeof(addr);
+
+    if (abstract) {
+        size_t name_len = strlen(path);
+        if (name_len > sizeof(addr.sun_path) - 2) {
+            close(fd);
+            errno = ENAMETOOLONG;
+            perror("abstract socket name");
+            return -1;
+        }
+        addr.sun_path[0] = '\0';
+        memcpy(addr.sun_path + 1, path, name_len);
+        addr_len = (socklen_t)(sizeof(addr.sun_family) + 1 + name_len);
+        listener->unlink_path = NULL;
+    } else {
+        unlink(path);
+        strncpy(addr.sun_path, path, sizeof(addr.sun_path) - 1);
+        listener->unlink_path = path;
+    }
+
+    if (bind(fd, (struct sockaddr *)&addr, addr_len) < 0) {
+        perror("bind");
+        close(fd);
+        return -1;
+    }
+    if (listen(fd, 4) < 0) {
+        perror("listen");
+        close(fd);
+        return -1;
+    }
+
+    listener->fd = fd;
+    listener->name = path;
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
     const char *sock_path = (argc > 1) ? argv[1] : "/data/local/tmp/display_daemon.sock";
@@ -249,39 +306,32 @@ int main(int argc, char **argv)
     signal(SIGTERM, handle_signal);
     signal(SIGPIPE, SIG_IGN);
 
-    unlink(sock_path);
-    int listen_fd = socket(AF_UNIX, SOCK_STREAM, 0);
-    if (listen_fd < 0) {
-        perror("socket");
+    if (create_listener(&file_listener, sock_path, false) < 0)
         return 1;
-    }
-
-    struct sockaddr_un addr;
-    memset(&addr, 0, sizeof(addr));
-    addr.sun_family = AF_UNIX;
-    strncpy(addr.sun_path, sock_path, sizeof(addr.sun_path) - 1);
-
-    if (bind(listen_fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-        perror("bind");
-        return 1;
-    }
-    if (listen(listen_fd, 4) < 0) {
-        perror("listen");
-        return 1;
-    }
+    if (create_listener(&abstract_listener, ABSTRACT_SOCKET_NAME, true) < 0)
+        fprintf(stderr, "daemon: abstract socket @%s unavailable, continuing with file socket only\n",
+                ABSTRACT_SOCKET_NAME);
 
     epoll_fd = epoll_create1(0);
-    struct epoll_event ev = { .events = EPOLLIN, .data.ptr = NULL };
-    epoll_ctl(epoll_fd, EPOLL_CTL_ADD, listen_fd, &ev);
+    struct epoll_event ev = { .events = EPOLLIN, .data.ptr = &file_listener };
+    epoll_ctl(epoll_fd, EPOLL_CTL_ADD, file_listener.fd, &ev);
+    if (abstract_listener.fd >= 0) {
+        ev.data.ptr = &abstract_listener;
+        epoll_ctl(epoll_fd, EPOLL_CTL_ADD, abstract_listener.fd, &ev);
+    }
 
     fprintf(stderr, "daemon: listening on %s\n", sock_path);
+    if (abstract_listener.fd >= 0)
+        fprintf(stderr, "daemon: listening on @%s\n", ABSTRACT_SOCKET_NAME);
 
     struct epoll_event events[MAX_EVENTS];
     while (running) {
         int nfds = epoll_wait(epoll_fd, events, MAX_EVENTS, 1000);
         for (int i = 0; i < nfds; i++) {
-            if (events[i].data.ptr == NULL) {
-                handle_new_connection(listen_fd);
+            if (events[i].data.ptr == &file_listener ||
+                events[i].data.ptr == &abstract_listener) {
+                struct listener *listener = events[i].data.ptr;
+                handle_new_connection(listener->fd);
             } else {
                 struct client *c = events[i].data.ptr;
                 if (events[i].events & (EPOLLHUP | EPOLLERR))
@@ -295,9 +345,12 @@ int main(int argc, char **argv)
     clear_deposited_fds();
     client_free(consumer);
     client_free(producer);
-    close(listen_fd);
+    close(file_listener.fd);
+    if (abstract_listener.fd >= 0)
+        close(abstract_listener.fd);
     close(epoll_fd);
-    unlink(sock_path);
+    if (file_listener.unlink_path)
+        unlink(file_listener.unlink_path);
     fprintf(stderr, "daemon: shutdown\n");
     return 0;
 }

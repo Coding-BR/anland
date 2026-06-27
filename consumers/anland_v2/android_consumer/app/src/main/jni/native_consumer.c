@@ -158,7 +158,7 @@ static void send_refresh_rate(struct consumer_state *s)
 
 static int do_connect(struct consumer_state *s)
 {
-    const char *sock = "/data/local/tmp/display_daemon.sock";
+    const char *sock = "@anland_display";
 
     if (s->ctx) {
         disconnect(s->ctx);
@@ -197,8 +197,12 @@ static int do_connect(struct consumer_state *s)
          s->screen_w, s->screen_h, s->buf_count);
 
     if (connect_to_deamon(&s->ctx, sock) < 0) {
-        LOGE("connect_to_deamon failed");
-        return -1;
+        sock = "/data/local/tmp/display_daemon.sock";
+        LOGI("abstract socket unavailable, falling back to %s", sock);
+        if (connect_to_deamon(&s->ctx, sock) < 0) {
+            LOGE("connect_to_deamon failed");
+            return -1;
+        }
     }
 
     set_screen_info(s->ctx, s->screen_w, s->screen_h,

@@ -56,6 +56,16 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
             nativeSetRefreshRate(d.getRefreshRate());
     }
 
+    private void startNativeIfReady() {
+        Surface surface = surfaceView.getHolder().getSurface();
+        if (surface == null || !surface.isValid())
+            return;
+        surfaceReady = true;
+        nativeStop();
+        nativeStart(surface);
+        pushRefreshRate();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,11 +103,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         DisplayManager dm = getSystemService(DisplayManager.class);
         if (dm != null)
             dm.registerDisplayListener(displayListener, null);
-        if (surfaceReady) {
-            nativeStop();
-            nativeStart(surfaceView.getHolder().getSurface());
-            pushRefreshRate();
-        }
+        startNativeIfReady();
     }
 
     @Override
@@ -111,21 +117,26 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        startNativeIfReady();
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         Log.i(TAG, "surfaceChanged: " + width + "x" + height);
-        surfaceReady = true;
-        nativeStop();
-        nativeStart(holder.getSurface());
-        pushRefreshRate();
+        startNativeIfReady();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         surfaceReady = false;
         nativeStop();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus)
+            startNativeIfReady();
     }
 
     @Override

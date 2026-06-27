@@ -79,9 +79,21 @@ int connect_unix(const char *path)
     struct sockaddr_un addr;
     memset(&addr, 0, sizeof(addr));
     addr.sun_family = AF_UNIX;
-    strncpy(addr.sun_path, path, sizeof(addr.sun_path) - 1);
+    socklen_t addr_len = sizeof(addr);
+    if (path[0] == '@') {
+        size_t name_len = strlen(path + 1);
+        if (name_len > sizeof(addr.sun_path) - 2) {
+            close(fd);
+            return -1;
+        }
+        addr.sun_path[0] = '\0';
+        memcpy(addr.sun_path + 1, path + 1, name_len);
+        addr_len = (socklen_t)(sizeof(addr.sun_family) + 1 + name_len);
+    } else {
+        strncpy(addr.sun_path, path, sizeof(addr.sun_path) - 1);
+    }
 
-    if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+    if (connect(fd, (struct sockaddr *)&addr, addr_len) < 0) {
         close(fd);
         return -1;
     }
