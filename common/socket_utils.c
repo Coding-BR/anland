@@ -15,7 +15,7 @@ int send_fds(int sock, const void *data, size_t data_len,
         .iov_len  = data_len,
     };
 
-    char cmsg_buf[CMSG_SPACE(sizeof(int) * fd_count)];
+    char cmsg_buf[CMSG_SPACE(sizeof(int) * fd_count)] __attribute__((aligned(__alignof__(struct cmsghdr))));
     memset(cmsg_buf, 0, sizeof(cmsg_buf));
 
     struct msghdr msg = {
@@ -43,7 +43,7 @@ int recv_fds(int sock, void *data, size_t data_len,
         .iov_len  = data_len,
     };
 
-    char cmsg_buf[CMSG_SPACE(sizeof(int) * fd_count)];
+    char cmsg_buf[CMSG_SPACE(sizeof(int) * fd_count)] __attribute__((aligned(__alignof__(struct cmsghdr))));
     memset(cmsg_buf, 0, sizeof(cmsg_buf));
 
     struct msghdr msg = {

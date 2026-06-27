@@ -2134,7 +2134,7 @@ diff -ruN a/src/backends/anland/socket_utils.c b/src/backends/anland/socket_util
 +        .iov_len  = data_len,
 +    };
 +
-+    char cmsg_buf[CMSG_SPACE(sizeof(int) * fd_count)];
++    char cmsg_buf[CMSG_SPACE(sizeof(int) * fd_count)] __attribute__((aligned(__alignof__(struct cmsghdr))));
 +    memset(cmsg_buf, 0, sizeof(cmsg_buf));
 +
 +    struct msghdr msg = {
@@ -2162,7 +2162,7 @@ diff -ruN a/src/backends/anland/socket_utils.c b/src/backends/anland/socket_util
 +        .iov_len  = data_len,
 +    };
 +
-+    char cmsg_buf[CMSG_SPACE(sizeof(int) * fd_count)];
++    char cmsg_buf[CMSG_SPACE(sizeof(int) * fd_count)] __attribute__((aligned(__alignof__(struct cmsghdr))));
 +    memset(cmsg_buf, 0, sizeof(cmsg_buf));
 +
 +    struct msghdr msg = {

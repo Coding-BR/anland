@@ -1,0 +1,3 @@
+C:/Users/adriano/Desktop/wayland/anland/consumers/anland_v2/android_consumer/app/.cxx/Debug/674m6b2u/arm64-v8a/CMakeFiles/anland_consumer.dir
+C:/Users/adriano/Desktop/wayland/anland/consumers/anland_v2/android_consumer/app/.cxx/Debug/674m6b2u/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/adriano/Desktop/wayland/anland/consumers/anland_v2/android_consumer/app/.cxx/Debug/674m6b2u/arm64-v8a/CMakeFiles/rebuild_cache.dir

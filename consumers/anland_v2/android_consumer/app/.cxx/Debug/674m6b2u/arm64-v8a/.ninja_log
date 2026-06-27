@@ -1,0 +1,10 @@
+# ninja log v5
+17	900	8042826052688568	CMakeFiles/anland_consumer.dir/C_/Users/adriano/Desktop/wayland/anland/common/socket_utils.c.o	5d40975203a98285
+9	1064	8042826054367303	CMakeFiles/anland_consumer.dir/native_consumer.c.o	41a027a9516bc9ad
+0	1141	8042826055130950	CMakeFiles/anland_consumer.dir/C_/Users/adriano/Desktop/wayland/anland/libdisplay_consumer/display_consumer.c.o	57b330e050f82ea4
+1141	1466	8042826058384013	C:/Users/adriano/Desktop/wayland/anland/consumers/anland_v2/android_consumer/app/build/intermediates/cxx/Debug/674m6b2u/obj/arm64-v8a/libanland_consumer.so	282b377b82e77ad2
+11	159	8042848302858279	CMakeFiles/anland_consumer.dir/C_/Users/adriano/Desktop/wayland/anland/common/socket_utils.c.o	5d40975203a98285
+3	247	8042848303765924	CMakeFiles/anland_consumer.dir/native_consumer.c.o	41a027a9516bc9ad
+247	720	8042848308529798	C:/Users/adriano/Desktop/wayland/anland/consumers/anland_v2/android_consumer/app/build/intermediates/cxx/Debug/674m6b2u/obj/arm64-v8a/libanland_consumer.so	282b377b82e77ad2
+5	286	8042849759914987	CMakeFiles/anland_consumer.dir/native_consumer.c.o	41a027a9516bc9ad
+288	726	8042849764390010	C:/Users/adriano/Desktop/wayland/anland/consumers/anland_v2/android_consumer/app/build/intermediates/cxx/Debug/674m6b2u/obj/arm64-v8a/libanland_consumer.so	282b377b82e77ad2

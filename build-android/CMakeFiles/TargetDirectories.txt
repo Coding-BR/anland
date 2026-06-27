@@ -1,0 +1,5 @@
+C:/Users/adriano/Desktop/wayland/anland/build-android/CMakeFiles/socket_utils.dir
+C:/Users/adriano/Desktop/wayland/anland/build-android/CMakeFiles/display_daemon.dir
+C:/Users/adriano/Desktop/wayland/anland/build-android/CMakeFiles/display_consumer.dir
+C:/Users/adriano/Desktop/wayland/anland/build-android/CMakeFiles/edit_cache.dir
+C:/Users/adriano/Desktop/wayland/anland/build-android/CMakeFiles/rebuild_cache.dir

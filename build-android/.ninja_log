@@ -1,0 +1,5 @@
+# ninja log v5
+0	168	8042849612948053	CMakeFiles/socket_utils.dir/common/socket_utils.c.o	ad8745fad93149f0
+8	279	8042849614007222	CMakeFiles/display_daemon.dir/daemon/daemon.c.o	7d10c6b1c168378d
+171	308	8042849614253014	libsocket_utils.a	4adaa54d777d06bb
+308	447	8042849615770117	display_daemon	3f735a6d870ac4b

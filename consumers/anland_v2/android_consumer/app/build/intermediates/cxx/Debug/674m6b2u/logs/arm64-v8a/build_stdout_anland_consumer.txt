@@ -1,0 +1,3 @@
+ninja: Entering directory `C:\Users\adriano\Desktop\wayland\anland\consumers\anland_v2\android_consumer\app\.cxx\Debug\674m6b2u\arm64-v8a'
+[1/2] Building C object CMakeFiles/anland_consumer.dir/native_consumer.c.o
+[2/2] Linking C shared library C:\Users\adriano\Desktop\wayland\anland\consumers\anland_v2\android_consumer\app\build\intermediates\cxx\Debug\674m6b2u\obj\arm64-v8a\libanland_consumer.so

@@ -1,0 +1,1 @@
+C:\Users\adriano\Desktop\wayland\anland\consumers\anland_v2\android_consumer\app\src\main\jni\CMakeLists.txt

@@ -1,0 +1,9 @@
+-- The C compiler identification is Clang 20.0.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Users/adriano/AppData/Local/Android/Sdk/ndk/29.0.13113456/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/Users/adriano/Desktop/wayland/anland/consumers/anland_v2/android_consumer/app/.cxx/Debug/674m6b2u/arm64-v8a

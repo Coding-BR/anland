@@ -1,0 +1,27 @@
+{
+  "buildFiles": [
+    "C:\\Users\\adriano\\Desktop\\wayland\\anland\\consumers\\anland_v2\\android_consumer\\app\\src\\main\\jni\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\adriano\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-C",
+      "C:\\Users\\adriano\\Desktop\\wayland\\anland\\consumers\\anland_v2\\android_consumer\\app\\.cxx\\Debug\\674m6b2u\\arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\adriano\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-C",
+    "C:\\Users\\adriano\\Desktop\\wayland\\anland\\consumers\\anland_v2\\android_consumer\\app\\.cxx\\Debug\\674m6b2u\\arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "anland_consumer::@6890427a1f51a3e7e1df": {
+      "artifactName": "anland_consumer",
+      "abi": "arm64-v8a",
+      "output": "C:\\Users\\adriano\\Desktop\\wayland\\anland\\consumers\\anland_v2\\android_consumer\\app\\build\\intermediates\\cxx\\Debug\\674m6b2u\\obj\\arm64-v8a\\libanland_consumer.so",
+      "runtimeFiles": []
+    }
+  }
+}

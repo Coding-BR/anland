@@ -72,7 +72,7 @@ ensure_deb_src() {
 # ---- build one source package with one patch -------------------------------
 # $1 = source package name, $2 = patch file, $3 = sentinel grep to confirm patch
 build_pkg() {
-    local src="$1" patch="$2"
+    local src="$1" patch="$2" sentinel="${3:-}"
 
     log "Installing build dependencies for '$src'"
     $SUDO apt-get build-dep -y "$src" || warn "build-dep for $src had issues; continuing"
@@ -130,7 +130,7 @@ main() {
 
     # sentinels: a distinctive literal string introduced by each patch
     # (no regex metacharacters, so plain grep matches it verbatim).
-    build_pkg kwin     "$kwin_patch"
+    build_pkg kwin     "$kwin_patch" "AnlandBackend"
     build_pkg xwayland "$xwl_patch"
     log "Done. Patched kwin and Xwayland built and installed."
     echo "Built packages are under: $WORKDIR/{kwin,xwayland}/"
